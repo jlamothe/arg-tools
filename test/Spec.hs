@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE OverloadedStrings #-}
 
 import Data.Char (chr, ord)
+import Data.Word (Word8)
 import Test.Hspec (Spec, context, describe, hspec, it, shouldBe)
 
 import qualified Data.ByteString.Lazy as BS
@@ -31,6 +32,7 @@ import ARGTools
 main :: IO ()
 main = hspec $ describe "ARGTools" $ do
   fromHexSpec
+  fromUTF8Spec
   toUTF8Spec
 
 fromHexSpec :: Spec
@@ -48,6 +50,19 @@ fromHexSpec = describe "fromHex" $ mapM_
   where
     deadbeef = BS.pack [ 0xde, 0xad, 0xbe, 0xef ]
 
+fromUTF8Spec :: Spec
+fromUTF8Spec = describe "fromUTF8" $ mapM_
+  (\(label, input, expected) -> context label $
+    it ("should be " ++ show expected) $
+      fromUTF8 input `shouldBe` expected)
+  --  label,     input,    expected
+  [ ( "ASCII",   "hello",  Just "hello"              )
+  , ( "2-byte",  bs2,      Just $ chr 0xff : "x"     )
+  , ( "3-byte",  bs3,      Just $ chr 0xffff : "x"   )
+  , ( "4-byte",  bs4,      Just $ chr 0x10ffff : "x" )
+  , ( "invalid", "x\255x", Nothing                   )
+  ]
+
 toUTF8Spec :: Spec
 toUTF8Spec = describe "toUTF8" $ mapM_
   (\(label, input, expected) -> context label $
@@ -59,10 +74,17 @@ toUTF8Spec = describe "toUTF8" $ mapM_
   , ( "3-byte", chr 0xffff : "x",   bs3      )
   , ( "4-byte", chr 0x10ffff : "x", bs4      )
   ]
-  where
-    bs2 = BS.pack [0xc3, 0xbf, x]
-    bs3 = BS.pack [0xef, 0xbf, 0xbf, x]
-    bs4 = BS.pack [0xf4, 0x8f, 0xbf, 0xbf, x]
-    x = fromIntegral $ ord 'x'
+
+bs2 :: BS.ByteString
+bs2 = BS.pack [0xc3, 0xbf, xChar]
+
+bs3 :: BS.ByteString
+bs3 = BS.pack [0xef, 0xbf, 0xbf, xChar]
+
+bs4 :: BS.ByteString
+bs4 = BS.pack [0xf4, 0x8f, 0xbf, 0xbf, xChar]
+
+xChar :: Word8
+xChar = fromIntegral $ ord 'x'
 
 -- jl
