@@ -62,6 +62,11 @@ toBinary = map toBits . BS.unpack
 
 -- | Converts a byte to bits
 toBits :: Word8 -> String
-toBits n = showIntAtBase 2 (chr . (ord '0' +)) n ""
+toBits n = let
+  str  = showIntAtBase 2 (chr . (ord '0' +)) n ""
+  sLen = length str
+  pLen = 8 - sLen
+  pad  = replicate pLen '0'
+  in pad ++ str
 
 -- jl
