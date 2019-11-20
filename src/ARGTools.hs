@@ -19,14 +19,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 -}
 
+{-# LANGUAGE LambdaCase #-}
+
 module ARGTools
   ( fromHex
+  , fromUTF8
   , toUTF8
   ) where
 
 import qualified Data.ByteString.Base16.Lazy as B16
 import Data.ByteString.Builder (toLazyByteString, stringUtf8)
 import qualified Data.ByteString.Lazy as BS
+import qualified Data.Text.Lazy as T
+import Data.Text.Lazy.Encoding (decodeUtf8')
 
 -- | Decodes a hexadecimal string
 fromHex :: String -> Maybe BS.ByteString
@@ -35,6 +40,12 @@ fromHex = do
   if BS.null err
     then return $ Just res
     else return Nothing
+
+-- | Decodes a UTF8 string
+fromUTF8 :: BS.ByteString -> Maybe String
+fromUTF8 = decodeUtf8' >>= \case
+  Left _    -> return Nothing
+  Right res -> return $ Just $ T.unpack res
 
 -- | Encodes a string to UTF8
 toUTF8 :: String -> BS.ByteString
