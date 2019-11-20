@@ -1,0 +1,41 @@
+name:                arg-tools
+version:             0.0.0
+github:              "jlamothe/arg-tools"
+license:             GPL-3
+author:              "Jonathan Lamothe"
+maintainer:          "jlamothe1980@gmail.com"
+copyright:           "Jonathan Lamothe"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+synopsis:            Tools for generating and decoding ARGs
+category:            ARG
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/jlamothe/arg-tools#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+ghc-options:
+- -Wall
+
+library:
+  source-dirs: src
+
+tests:
+  arg-tools-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - arg-tools
+    - hspec >= 2.7.1 && < 2.8
