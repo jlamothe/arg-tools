@@ -19,6 +19,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 -}
 
-module ARGTools where
+module ARGTools
+  ( fromHex
+  , toUTF8
+  ) where
+
+import qualified Data.ByteString.Base16.Lazy as B16
+import Data.ByteString.Builder (toLazyByteString, stringUtf8)
+import qualified Data.ByteString.Lazy as BS
+
+-- | Decodes a hexadecimal string
+fromHex :: String -> Maybe BS.ByteString
+fromHex = do
+  (res, err) <- B16.decode . toUTF8
+  if BS.null err
+    then return $ Just res
+    else return Nothing
+
+-- | Encodes a string to UTF8
+toUTF8 :: String -> BS.ByteString
+toUTF8 = toLazyByteString . stringUtf8
 
 -- jl
