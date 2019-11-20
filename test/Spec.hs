@@ -91,12 +91,14 @@ toBinarySpec = describe "toBinary" $ let
     toBinary input `shouldBe` expected
 
 toBitsSpec :: Spec
-toBitsSpec = describe "toBits" $ let
-  input    = 0xa1
-  expected = "10100001"
-
-  in it ("should be " ++ expected) $
-    toBits input `shouldBe` expected
+toBitsSpec = describe "toBits" $ mapM_
+  (\(label, input, expected) -> context label $
+    it ("should be " ++ expected) $
+      toBits input `shouldBe` expected)
+  --  label,          input, expected
+  [ ( "leading zero", 0x7f,  "01111111" )
+  , ( "leading one",  0xa1,  "10100001" )
+  ]
 
 bs2 :: BS.ByteString
 bs2 = BS.pack [0xc3, 0xbf, xChar]
