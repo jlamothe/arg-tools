@@ -34,6 +34,8 @@ main = hspec $ describe "ARGTools" $ do
   fromHexSpec
   fromUTF8Spec
   toUTF8Spec
+  toBinarySpec
+  toBitsSpec
 
 fromHexSpec :: Spec
 fromHexSpec = describe "fromHex" $ mapM_
@@ -74,6 +76,27 @@ toUTF8Spec = describe "toUTF8" $ mapM_
   , ( "3-byte", chr 0xffff : "x",   bs3      )
   , ( "4-byte", chr 0x10ffff : "x", bs4      )
   ]
+
+toBinarySpec :: Spec
+toBinarySpec = describe "toBinary" $ let
+  input    = BS.pack [ 0xde, 0xad, 0xbe, 0xef ]
+  expected =
+    [ "11011110"
+    , "10101101"
+    , "10111110"
+    , "11101111"
+    ]
+
+  in it ("should be " ++ show expected) $
+    toBinary input `shouldBe` expected
+
+toBitsSpec :: Spec
+toBitsSpec = describe "toBits" $ let
+  input    = 0xa1
+  expected = "10100001"
+
+  in it ("should be " ++ expected) $
+    toBits input `shouldBe` expected
 
 bs2 :: BS.ByteString
 bs2 = BS.pack [0xc3, 0xbf, xChar]

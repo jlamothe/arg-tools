@@ -25,13 +25,18 @@ module ARGTools
   ( fromHex
   , fromUTF8
   , toUTF8
+  , toBinary
+  , toBits
   ) where
 
 import qualified Data.ByteString.Base16.Lazy as B16
 import Data.ByteString.Builder (toLazyByteString, stringUtf8)
 import qualified Data.ByteString.Lazy as BS
+import Data.Char (chr, ord)
 import qualified Data.Text.Lazy as T
 import Data.Text.Lazy.Encoding (decodeUtf8')
+import Data.Word (Word8)
+import Numeric (showIntAtBase)
 
 -- | Decodes a hexadecimal string
 fromHex :: String -> Maybe BS.ByteString
@@ -50,5 +55,13 @@ fromUTF8 = decodeUtf8' >>= \case
 -- | Encodes a string to UTF8
 toUTF8 :: String -> BS.ByteString
 toUTF8 = toLazyByteString . stringUtf8
+
+-- | Encodes a ByteString into binary
+toBinary :: BS.ByteString -> [String]
+toBinary = map toBits . BS.unpack
+
+-- | Converts a byte to bits
+toBits :: Word8 -> String
+toBits n = showIntAtBase 2 (chr . (ord '0' +)) n ""
 
 -- jl
