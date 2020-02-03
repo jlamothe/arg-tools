@@ -27,6 +27,7 @@ module ARGTools
   , toUTF8
   , toBinary
   , toBits
+  , caesar
   ) where
 
 import qualified Data.ByteString.Base16.Lazy as B16
@@ -68,5 +69,21 @@ toBits n = let
   pLen = 8 - sLen
   pad  = replicate pLen '0'
   in pad ++ str
+
+-- | Applies a Caesar cypher to a string
+caesar
+  :: Int
+  -- ^ The shift
+  -> String
+  -> String
+caesar n = map $ \ch ->
+  if ch >= 'a' && ch <= 'z'
+    then shiftFrom 'a' ch
+  else if ch >= 'A' && ch <= 'Z'
+    then shiftFrom 'A' ch
+  else ch
+  where
+    shiftFrom start ch = chr $
+      (ord ch - ord start + n) `mod` 26 + ord start
 
 -- jl
