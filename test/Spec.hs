@@ -36,6 +36,7 @@ main = hspec $ describe "ARGTools" $ do
   toUTF8Spec
   toBinarySpec
   toBitsSpec
+  caesarSpec
 
 fromHexSpec :: Spec
 fromHexSpec = describe "fromHex" $ mapM_
@@ -98,6 +99,20 @@ toBitsSpec = describe "toBits" $ mapM_
   --  label,          input, expected
   [ ( "leading zero", 0x7f,  "01111111" )
   , ( "leading one",  0xa1,  "10100001" )
+  ]
+
+caesarSpec :: Spec
+caesarSpec = describe "caesar" $ mapM_
+  (\(shift, input, expected) -> let
+    label = "shift: " ++ show shift ++ ", input: " ++ input
+    in context label $
+      it ("should be " ++ expected) $
+        caesar shift input `shouldBe` expected)
+  --  shift, input,       expected
+  [ ( 0,     "Foo, bar!", "Foo, bar!" )
+  , ( 1,     "Abc, xyz.", "Bcd, yza." )
+  , ( 1,     "ZZT",       "AAU"       )
+  , ( -1,    "AbCdE!",    "ZaBcD!"    )
   ]
 
 bs2 :: BS.ByteString
