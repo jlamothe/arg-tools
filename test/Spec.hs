@@ -37,6 +37,7 @@ main = hspec $ describe "ARGTools" $ do
   toBinarySpec
   toBitsSpec
   caesarSpec
+  polyAlphaSpec
 
 fromHexSpec :: Spec
 fromHexSpec = describe "fromHex" $ mapM_
@@ -113,6 +114,20 @@ caesarSpec = describe "caesar" $ mapM_
   , ( 1,     "Abc, xyz.", "Bcd, yza." )
   , ( 1,     "ZZT",       "AAU"       )
   , ( -1,    "AbCdE!",    "ZaBcD!"    )
+  ]
+
+polyAlphaSpec :: Spec
+polyAlphaSpec = describe "polyAlpha" $ mapM_
+  (\(key, flag, input, expected) -> let
+    label = "key: " ++ show key ++ ", input: " ++ input
+    in context label $
+      it ("should be " ++ expected) $
+        polyAlpha key flag input `shouldBe` expected)
+  --  key,        flag,  input,           expected
+  [ ( [],         True,  "Hello, world!", "Hello, world!" )
+  , ( [],         False, "Hello, world!", "Hello, world!" )
+  , ( [1, -1, 0], True,  "Foo BarBaz",    "Gno CzrCzz"    )
+  , ( [1, -1, 0], False, "Foo BarBaz",    "Gno AasAaa"    )
   ]
 
 bs2 :: BS.ByteString

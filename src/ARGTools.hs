@@ -28,12 +28,13 @@ module ARGTools
   , toBinary
   , toBits
   , caesar
+  , polyAlpha
   ) where
 
 import qualified Data.ByteString.Base16.Lazy as B16
 import Data.ByteString.Builder (toLazyByteString, stringUtf8)
 import qualified Data.ByteString.Lazy as BS
-import Data.Char (chr, ord)
+import Data.Char (chr, isAsciiLower, isAsciiUpper, ord)
 import qualified Data.Text.Lazy as T
 import Data.Text.Lazy.Encoding (decodeUtf8')
 import Data.Word (Word8)
@@ -76,14 +77,42 @@ caesar
   -- ^ The shift
   -> String
   -> String
-caesar n = map $ \ch ->
-  if ch >= 'a' && ch <= 'z'
-    then shiftFrom 'a' ch
-  else if ch >= 'A' && ch <= 'Z'
-    then shiftFrom 'A' ch
-  else ch
+caesar n = polyAlpha [n] False
+
+-- | Applies a polyalphabetic cypher
+polyAlpha
+  :: [Int]
+  -- ^ The key
+  -> Bool
+  -- ^ Set 'True' when we should only iterate through the key on
+  -- alphabetic characters
+  -> String
+  -> String
+polyAlpha []   = \_ str -> str
+polyAlpha keys =
+  subFunc keys'
   where
-    shiftFrom start ch = chr $
-      (ord ch - ord start + n) `mod` 26 + ord start
+    keys' = concat $ repeat keys
+
+    subFunc _ _ [] = []
+    subFunc [] _ str = str
+    subFunc kks@(k:ks) alphaIter (c:cs) = let
+      (isAlpha, c') = shift k c
+      in c' : if isAlpha || not alphaIter
+        then subFunc ks alphaIter cs
+        else subFunc kks alphaIter cs
+
+    shift k c = let
+      start
+        | isAsciiLower c = Just 'a'
+        | isAsciiUpper c = Just 'A'
+        | otherwise      = Nothing
+
+      shiftFrom s = chr $
+        (ord c - ord s + k) `mod` 26 + ord s
+
+      in case start of
+        Just s  -> (True, shiftFrom s)
+        Nothing -> (False, c)
 
 -- jl
