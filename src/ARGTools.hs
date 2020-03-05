@@ -23,6 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 module ARGTools
   ( fromHex
+  , toHex
   , fromUTF8
   , toUTF8
   , toBinary
@@ -35,6 +36,7 @@ import qualified Data.ByteString.Base16.Lazy as B16
 import Data.ByteString.Builder (toLazyByteString, stringUtf8)
 import qualified Data.ByteString.Lazy as BS
 import Data.Char (chr, isAsciiLower, isAsciiUpper, ord)
+import Data.Maybe (fromJust)
 import qualified Data.Text.Lazy as T
 import Data.Text.Lazy.Encoding (decodeUtf8')
 import Data.Word (Word8)
@@ -47,6 +49,10 @@ fromHex = do
   if BS.null err
     then return $ Just res
     else return Nothing
+
+-- | Encodes a bytestring to hex
+toHex :: BS.ByteString -> String
+toHex = fromJust . fromUTF8 . B16.encode
 
 -- | Decodes a UTF8 string
 fromUTF8 :: BS.ByteString -> Maybe String

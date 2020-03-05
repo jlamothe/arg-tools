@@ -32,6 +32,7 @@ import ARGTools
 main :: IO ()
 main = hspec $ describe "ARGTools" $ do
   fromHexSpec
+  toHexSpec
   fromUTF8Spec
   toUTF8Spec
   toBinarySpec
@@ -53,6 +54,13 @@ fromHexSpec = describe "fromHex" $ mapM_
   ]
   where
     deadbeef = BS.pack [ 0xde, 0xad, 0xbe, 0xef ]
+
+toHexSpec :: Spec
+toHexSpec = describe "toHex" $ let
+  input    = "1 2"
+  expected = "312032"
+  in it ("should be " ++ expected) $
+    toHex input `shouldBe` expected
 
 fromUTF8Spec :: Spec
 fromUTF8Spec = describe "fromUTF8" $ mapM_
