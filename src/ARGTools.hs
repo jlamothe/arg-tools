@@ -23,6 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 module ARGTools
   ( editBytes
+  , mapBytes
   , fromHex
   , toHex
   , fromDec
@@ -52,6 +53,14 @@ editBytes
   -> BS.ByteString
   -> BS.ByteString
 editBytes f = BS.pack . f . BS.unpack
+
+-- | Edits the individual bytes of a ByteString
+mapBytes
+  :: (Word8 -> Word8)
+  -- ^ The editing function
+  -> BS.ByteString
+  -> BS.ByteString
+mapBytes f = editBytes $ map f
 
 -- | Decodes a hexadecimal string
 fromHex :: String -> Maybe BS.ByteString

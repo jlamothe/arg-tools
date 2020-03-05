@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 {-# LANGUAGE OverloadedStrings #-}
 
+import Data.Bits (complement)
 import Data.Char (chr, ord)
 import Data.Word (Word8)
 import Test.Hspec (Spec, context, describe, hspec, it, shouldBe)
@@ -32,6 +33,7 @@ import ARGTools
 main :: IO ()
 main = hspec $ describe "ARGTools" $ do
   editBytesSpec
+  mapBytesSpec
   fromHexSpec
   toHexSpec
   fromDecSpec
@@ -46,6 +48,11 @@ editBytesSpec :: Spec
 editBytesSpec = describe "editBytes" $
   it "should apply the function" $
     editBytes reverse "\xab\xcd\xef" `shouldBe` "\xef\xcd\xab"
+
+mapBytesSpec :: Spec
+mapBytesSpec = describe "mapBytes" $
+  it "should apply the function" $
+    mapBytes complement "\xde\xad\xbe\xef" `shouldBe` "\x21\x52\x41\x10"
 
 fromHexSpec :: Spec
 fromHexSpec = describe "fromHex" $ mapM_
