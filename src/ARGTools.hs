@@ -24,6 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 module ARGTools
   ( fromHex
   , toHex
+  , fromDec
   , fromUTF8
   , toUTF8
   , toBinary
@@ -53,6 +54,19 @@ fromHex = do
 -- | Encodes a bytestring to hex
 toHex :: BS.ByteString -> String
 toHex = fromJust . fromUTF8 . B16.encode
+
+-- | Decodes a decimal string
+fromDec :: String -> Maybe BS.ByteString
+fromDec = do
+  codes <- words
+  return $ do
+    vals <- foldr
+      (\code acc -> case reads code of
+        [(n, "")] -> (n:) <$> acc
+        _         -> Nothing)
+      (Just [])
+      codes
+    Just $ BS.pack vals
 
 -- | Decodes a UTF8 string
 fromUTF8 :: BS.ByteString -> Maybe String

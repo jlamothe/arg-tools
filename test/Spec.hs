@@ -33,6 +33,7 @@ main :: IO ()
 main = hspec $ describe "ARGTools" $ do
   fromHexSpec
   toHexSpec
+  fromDecSpec
   fromUTF8Spec
   toUTF8Spec
   toBinarySpec
@@ -61,6 +62,18 @@ toHexSpec = describe "toHex" $ let
   expected = "312032"
   in it ("should be " ++ expected) $
     toHex input `shouldBe` expected
+
+fromDecSpec :: Spec
+fromDecSpec = describe "fromDec" $ mapM_
+  (\(input, expected) ->
+    context (" input: " ++ input) $
+      it ("should be " ++ show expected) $
+        fromDec input `shouldBe` expected)
+
+  --  input, expected
+  [ ( "foo",      Nothing             )
+  , ( "0 16 255", Just "\x00\x10\xff" )
+  ]
 
 fromUTF8Spec :: Spec
 fromUTF8Spec = describe "fromUTF8" $ mapM_
