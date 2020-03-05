@@ -22,7 +22,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {-# LANGUAGE LambdaCase #-}
 
 module ARGTools
-  ( fromHex
+  ( editBytes
+  , fromHex
   , toHex
   , fromDec
   , fromUTF8
@@ -42,6 +43,15 @@ import qualified Data.Text.Lazy as T
 import Data.Text.Lazy.Encoding (decodeUtf8')
 import Data.Word (Word8)
 import Numeric (showIntAtBase)
+
+-- | Breaks a ByteString into a list of bytes, edits them, and
+-- reassembles
+editBytes
+  :: ([Word8] -> [Word8])
+  -- ^ The editing function
+  -> BS.ByteString
+  -> BS.ByteString
+editBytes f = BS.pack . f . BS.unpack
 
 -- | Decodes a hexadecimal string
 fromHex :: String -> Maybe BS.ByteString

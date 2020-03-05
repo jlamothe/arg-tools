@@ -31,6 +31,7 @@ import ARGTools
 
 main :: IO ()
 main = hspec $ describe "ARGTools" $ do
+  editBytesSpec
   fromHexSpec
   toHexSpec
   fromDecSpec
@@ -40,6 +41,11 @@ main = hspec $ describe "ARGTools" $ do
   toBitsSpec
   caesarSpec
   polyAlphaSpec
+
+editBytesSpec :: Spec
+editBytesSpec = describe "editBytes" $
+  it "should apply the function" $
+    editBytes reverse "\xab\xcd\xef" `shouldBe` "\xef\xcd\xab"
 
 fromHexSpec :: Spec
 fromHexSpec = describe "fromHex" $ mapM_
